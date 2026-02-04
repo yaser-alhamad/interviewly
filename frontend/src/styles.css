@@ -1,0 +1,124 @@
+/* Custom styles for Interviewly */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+
+body {
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Open Sans",
+    "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom button styles */
+.btn-primary {
+  @apply bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 shadow-md hover:shadow-lg;
+}
+
+.btn-secondary {
+  @apply bg-white text-gray-800 font-semibold py-3 px-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all duration-200;
+}
+
+.btn-success {
+  @apply bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-6 rounded-xl hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-200 shadow-md hover:shadow-lg;
+}
+
+.btn-danger {
+  @apply bg-gradient-to-r from-red-500 to-red-600 text-white py-3 px-6 rounded-xl hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 transition-all duration-200 shadow-md hover:shadow-lg;
+}
+
+/* Typography classes */
+.h1 {
+  @apply text-4xl md:text-5xl font-bold leading-tight;
+}
+
+.h2 {
+  @apply text-3xl md:text-4xl font-bold leading-tight;
+}
+
+.h3 {
+  @apply text-2xl md:text-3xl font-bold leading-snug;
+}
+
+.h4 {
+  @apply text-xl md:text-2xl font-semibold leading-normal;
+}
+
+.body-lg {
+  @apply text-lg text-gray-700;
+}
+
+.body-md {
+  @apply text-base text-gray-600;
+}
+
+.body-sm {
+  @apply text-sm text-gray-500;
+}
+
+/* Card styles */
+.card {
+  @apply bg-white rounded-2xl shadow-xl p-6 md:p-8;
+}
+
+.card-elevated {
+  @apply bg-white rounded-2xl shadow-2xl p-6 md:p-8;
+}
+
+/* Gradient backgrounds */
+.bg-gradient-primary {
+  @apply bg-gradient-to-br from-blue-50 to-indigo-50;
+}
+
+.bg-gradient-card {
+  @apply bg-gradient-to-br from-blue-50 to-indigo-50;
+}
+
+/* Input styles */
+.input-field {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base shadow-sm;
+}
+
+/* Progress bar */
+.progress-bar {
+  @apply w-full bg-gray-200 rounded-full h-2.5;
+}
+
+.progress-bar-fill {
+  @apply bg-gradient-to-r from-blue-500 to-indigo-600 h-2.5 rounded-full transition-all duration-500 ease-in-out;
+}
+
+/* Animation classes */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card {
+    @apply p-4;
+  }
+
+  .btn {
+    @apply w-full py-3 px-4;
+  }
+}
