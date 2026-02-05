@@ -6,7 +6,7 @@ import Feedback from "./components/Feedback";
 import Welcome from "./components/Welcome";
 import ChoosePlan from "./components/ChoosePlan";
 
-const API_BASE_URL = "https://interviewly-rjeu.vercel.app/";
+const API_BASE_URL = "https://interviewly-rjeu.vercel.app";
 
 function App() {
   const [step, setStep] = useState(null); // Initialize step to null to show Welcome screen first
