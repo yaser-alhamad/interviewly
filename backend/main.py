@@ -10,24 +10,22 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from datetime import datetime
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
 load_dotenv()
 
 app = FastAPI()
 
-# Add CORS middleware
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Configuration
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-# Initialize LangChain with Gemini
+
 if not GEMINI_API_KEY:
     print("Warning: GEMINI_API_KEY not configured. The application will not work properly without it.")
     llm = None
@@ -38,10 +36,9 @@ else:
         temperature=0.7
     )
 
-# Session storage (in-memory)
+
 sessions: Dict[str, dict] = {}
 
-# Data models
 class StartInterviewRequest(BaseModel):
     role: str
     seniority: str
@@ -50,7 +47,6 @@ class StartInterviewRequest(BaseModel):
 class AnswerRequest(BaseModel):
     answer: str
 
-# Helper functions
 def get_fallback_questions(count: int) -> List[str]:
     """Get generic fallback interview questions."""
     fallback_questions = [
@@ -89,12 +85,10 @@ async def start_interview(request: StartInterviewRequest):
     """Start a new interview session with generated questions based on role and seniority."""
     session_id = str(uuid.uuid4())
     
-    # Check if LLM is properly initialized
     if llm is None:
         print("LLM not initialized due to missing GEMINI_API_KEY")
         questions = get_fallback_questions(request.numQuestions)
     else:
-        # Generate interview questions using LangChain and Gemini
         prompt = f"""
         Generate exactly {request.numQuestions} specific, role-relevant interview questions for a {request.role} position at the {request.seniority} level.
         
@@ -115,14 +109,12 @@ async def start_interview(request: StartInterviewRequest):
         try:
             questions = await chain.ainvoke({})
             
-            # Ensure we have the right number of questions
             questions = questions[:request.numQuestions]
             
         except Exception as e:
             print(f"Error generating questions: {e}")
             questions = get_fallback_questions(request.numQuestions)
     
-    # Store session data
     sessions[session_id] = {
         "role": request.role,
         "seniority": request.seniority,
@@ -160,19 +152,15 @@ async def submit_answer(session_id: str, request: AnswerRequest):
     
     session_data = sessions[session_id]
     
-    # Store the answer
     session_data["answers"].append({
         "question": session_data["questions"][session_data["current_index"]],
         "answer": request.answer,
         "timestamp": datetime.now()
     })
     
-    # Move to next question
     session_data["current_index"] += 1
     
-    # Check if interview is complete
     if session_data["current_index"] >= len(session_data["questions"]):
-        # Generate feedback when all questions are answered
         await generate_feedback(session_id)
     
     return {"status": "success"}
@@ -185,13 +173,11 @@ async def generate_feedback(session_id: str):
     
     session_data = sessions[session_id]
     
-    # Check if LLM is properly initialized
     if llm is None:
         print("LLM not initialized due to missing GEMINI_API_KEY, using fallback feedback")
         session_data["feedback"] = get_fallback_feedback(session_data)
         return
     
-    # Prepare feedback prompt for LangChain
     answers_summary = []
     for i, answer_data in enumerate(session_data["answers"]):
         answers_summary.append(f"Q{i+1}: {answer_data['question']}\nA{i+1}: {answer_data['answer']}")
@@ -251,11 +237,9 @@ async def generate_feedback(session_id: str):
     
     try:
         feedback_json = await chain.ainvoke({})
-        print(f"Parsed feedback: {feedback_json}")  # Debug: Print parsed feedback
-        # Validate that the required fields are present in the new format
+        print(f"Parsed feedback: {feedback_json}")  
         required_fields = ['overall_score', 'summary_strengths', 'development_areas', 'detailed_feedback', 'recommendation_summary']
         if all(field in feedback_json for field in required_fields):
-            # Map the new response format to the expected frontend format
             mapped_feedback = {
                 "overall_score": feedback_json.get('overall_score', 5),
                 "strengths": feedback_json.get('summary_strengths', []),
@@ -274,16 +258,14 @@ async def generate_feedback(session_id: str):
                 "feedback_summary": feedback_json.get('recommendation_summary', 'No recommendation provided')
             }
             session_data["feedback"] = mapped_feedback
-            return  # Exit the function early if successful
+            return 
         else:
             print("Missing required fields in parsed feedback")
             print(f"Available fields: {list(feedback_json.keys())}")
         
-        # Fallback feedback if validation failed
         session_data["feedback"] = get_fallback_feedback(session_data)
     except Exception as e:
         print(f"Error generating feedback: {e}")
-        # Fallback feedback
         session_data["feedback"] = get_fallback_feedback(session_data)
 
 
